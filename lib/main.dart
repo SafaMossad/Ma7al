@@ -87,10 +87,11 @@ class _MyAppState extends State<MyApp> {
   }
 }*/
 import 'package:flutter/material.dart';
+import './providers/category.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/providers/orders.dart';
-import 'package:shop/screens/orders_screen.dart';
-import 'package:shop/screens/splash_screen.dart';
+import './providers/orders.dart';
+import './screens/orders_screen.dart';
+import './screens/splash_screen.dart';
 
 import './providers/auth.dart';
 import './providers/cart.dart';
@@ -128,15 +129,23 @@ class MyApp extends StatelessWidget {
               previousOrders == null ? [] : previousOrders.orders,
             ),
           ),
+          ChangeNotifierProxyProvider<Auth, Category>(
+            update: (ctx, auth, previousCategory) => Category(
+              auth.token,
+              auth.userId,
+              previousCategory == null ? [] : previousCategory.category,
+            ),
+          ),
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'EL-MA7AL',
             theme: ThemeData(
-              primarySwatch: Colors.red,
+              accentColor: Colors.red,
               primaryColor: kPrimaryColor,
-              scaffoldBackgroundColor: Colors.white,
+              canvasColor: Colors.grey.shade200,
+              //scaffoldBackgroundColor: Colors.white,
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
             home: auth.isAuth? Tabs() : FutureBuilder(
@@ -149,9 +158,8 @@ class MyApp extends StatelessWidget {
             ),
             routes: {
               ProductDetails.routeName: (ctx) => ProductDetails(),
-              CartScreen.routeName:(ctx)=>CartScreen(),
+              CartScreen.routeName: (ctx) => CartScreen(),
               OrdersScreen.routeName: (ctx) => OrdersScreen(),
-
             },
           ),
         ));
