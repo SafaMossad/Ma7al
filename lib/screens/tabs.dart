@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart.dart';
-import '../providers/products.dart';
-import '../screens/cart_screen.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/badge.dart';
-import '../widgets/product_item.dart';
+import 'package:shop/providers/cart.dart';
+import 'package:shop/providers/products.dart';
+import 'package:shop/screens/cart_screen.dart';
+import 'package:shop/widgets/app_drawer.dart';
+import 'package:shop/widgets/badge.dart';
+import 'package:shop/widgets/product_item.dart';
 
 class Tabs extends StatefulWidget {
   @override

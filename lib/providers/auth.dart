@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/http_exception.dart';
+import 'package:shop/models/http_exception.dart';
 
 class Auth with ChangeNotifier {
   String _token;
@@ -26,7 +26,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> loginFacebook() async {
-/*    String url = "https://alma7al.herokuapp.com/api/v1/sessions";
+    String url = "https://alma7al.herokuapp.com/api/v1/sessions";
     Map<String, String> headers = {"Content-type": "application/json"};
     FacebookLogin facebookSignIn = FacebookLogin();
 
@@ -81,7 +81,7 @@ class Auth with ChangeNotifier {
     } catch (error) {
       print(" Caught error=> $error");
       throw error;
-    }*/
+    }
   }
 
   Future<void> login(String email, String password) async {
@@ -116,7 +116,7 @@ class Auth with ChangeNotifier {
   }
 
   Future<void> signUpFacebook() async {
-   /* String urllink = "https://alma7al.herokuapp.com/api/v1/users";
+    String urllink = "https://alma7al.herokuapp.com/api/v1/users";
     Map<String, String> headers = {"Content-type": "application/json"};
     FacebookLogin facebookSignIn = FacebookLogin();
 
@@ -172,7 +172,7 @@ class Auth with ChangeNotifier {
     } catch (error) {
       print(" Caught error=> $error");
       throw error;
-    }*/
+    }
   }
 
 

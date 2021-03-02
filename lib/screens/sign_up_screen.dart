@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth.dart';
-import '../models/http_exception.dart';
+import 'package:shop/providers/auth.dart';
+import 'package:shop/models/http_exception.dart';
 
 import '../shared_text_field_component/email_field.dart';
 import '../shared_text_field_component/password_field.dart';

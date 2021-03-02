@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import '../providers/cart.dart';
+import 'package:shop/providers/cart.dart';
 
 class CartItem extends StatefulWidget {
   final String id;

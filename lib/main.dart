@@ -88,9 +88,9 @@ class _MyAppState extends State<MyApp> {
 }*/
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './providers/orders.dart';
-import './screens/orders_screen.dart';
-import './screens/splash_screen.dart';
+import 'package:shop/providers/orders.dart';
+import 'package:shop/screens/orders_screen.dart';
+import 'package:shop/screens/splash_screen.dart';
 
 import './providers/auth.dart';
 import './providers/cart.dart';

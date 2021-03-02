@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/constants/text_formed_field_constants.dart';
+import 'package:shop/models/http_exception.dart';
+import 'package:shop/widgets/login_background.dart';
 
-import '../constants/text_formed_field_constants.dart';
-import '../models/http_exception.dart';
 import '../providers/auth.dart';
 import '../screens/sign_up_screen.dart';
 import '../widgets/already_have_an_account_check.dart';
-import '../widgets/login_background.dart';
 import '../widgets/or_divider.dart';
 import '../widgets/rounded_button.dart';
 import '../widgets/social_icon.dart';
@@ -51,7 +51,6 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Text('Okay'),
             onPressed: () {
               Navigator.of(ctx).pop();
-
             },
           )
         ],
@@ -70,9 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'This email address is already in use.';
-      } else if (error
-          .toString()
-          .contains(' "errors": "Invalid email or password"')) {
+      } else if (error.toString().contains(' "errors": "Invalid email or password"')) {
         errorMessage = 'This is not a valid email address';
       } else if (error.toString().contains('WEAK_PASSWORD')) {
         errorMessage = 'This password is too weak.';
@@ -89,9 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   Future<void> _submit() async {
@@ -113,9 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var errorMessage = 'Check Email or password';
       if (error.toString().contains("Invalid")) {
         errorMessage = ' Check Email or Password';
-      } else if (error
-          .toString()
-          .contains(' "errors": "Invalid email or password"')) {
+      } else if (error.toString().contains(' "errors": "Invalid email or password"')) {
         errorMessage = 'This is not a valid email address';
       } else if (error.toString().contains('WEAK_PASSWORD')) {
         errorMessage = 'This password is too weak.';
@@ -213,8 +205,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 obscureText: isVisible
                     //&& "Enter Your Password" == 'Enter Your Password'
-                    ? true
-                    : false,
+                        ? true
+                        : false,
                 decoration: kTextFieldDecoration.copyWith(
                   //  floatingLabelBehavior: FloatingLabelBehavior.always,
                   labelText: "Password",
@@ -250,12 +242,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 20.0),
-            _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : RoundedButton(text: "LOGIN", press: _submit),
-
+            RoundedButton(text: "LOGIN", press: _submit),
+            if (_isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {
