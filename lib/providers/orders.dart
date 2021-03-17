@@ -32,7 +32,8 @@ class Orders with ChangeNotifier {
 
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    final urlCart = 'https://alma7al.herokuapp.com/api/v1/users/1/orders';
+    final urlCart = 'https://alma7al.herokuapp.com/api/v1/users/$userId/orders';
+    print(authToken);
     final timestamp = DateTime.now();
     try {
       final cartResponse = await http.post(urlCart,

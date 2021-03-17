@@ -127,7 +127,7 @@ class _OrderButtonState extends State<OrderButton> {
           ? CircularProgressIndicator()
           : Container(
               width: MediaQuery.of(context).size.width / 3,
-              color: Colors.green,
+              color: Colors.white,
               child: Text(
                 'أطلب الأن',
                 style: TextStyle(

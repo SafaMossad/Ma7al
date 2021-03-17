@@ -48,10 +48,7 @@ class _TabsState extends State<Tabs> {
         });
 
       Provider.of<Category>(context, listen: false).fetchItems().then((_) {
-        if (mounted)
-          setState(() {
-            _isLoading = false;
-          });
+
       });
       Provider.of<Products>(context, listen: false)
           .fetchItems(initial)

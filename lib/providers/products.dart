@@ -76,7 +76,7 @@ class Products with ChangeNotifier {
 
   Future<List<Product>> fetchItems(int index) async {
 //_items.clear();
-    String myUrl = "https://alma7al.herokuapp.com/api/v1/categories/$index/items";
+    String myUrl = "https://alma7al.herokuapp.com/api/v1/admins/$userId/categories/$index/items";
     try {
       var response = await http.get(myUrl, headers: {
         'Accept': '*/*',
