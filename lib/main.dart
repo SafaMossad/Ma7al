@@ -140,23 +140,26 @@ class MyApp extends StatelessWidget {
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'EL-MA7AL',
+            title: 'فاكهة',
             theme: ThemeData(
               accentColor: Colors.red,
               primaryColor: kPrimaryColor,
-              canvasColor: Colors.grey.shade200,
-              //scaffoldBackgroundColor: Colors.white,
+              canvasColor: Colors.white,
+              //scaffoldBackgroundColor: Colors.blueGrey,
               visualDensity: VisualDensity.adaptivePlatformDensity,
+                fontFamily: ("arab")
             ),
             home: auth.isAuth? Tabs() : FutureBuilder(
               future: auth.tryAutoLogin(),
               builder: (ctx, authResultSnapshot) =>
               authResultSnapshot.connectionState ==
                   ConnectionState.waiting
-                  ? SplashScreen()
+                  ? CircularProgressIndicator()
                   : LoginScreen(),
             ),
             routes: {
+              LoginScreen.routeName: (ctx) => LoginScreen(),
+              Tabs.routeName: (ctx) => Tabs(),
               ProductDetails.routeName: (ctx) => ProductDetails(),
               CartScreen.routeName: (ctx) => CartScreen(),
               OrdersScreen.routeName: (ctx) => OrdersScreen(),

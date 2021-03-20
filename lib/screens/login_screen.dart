@@ -12,6 +12,7 @@ import '../widgets/rounded_button.dart';
 import '../widgets/social_icon.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const routeName ="/login";
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -242,11 +243,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 20.0),
-            RoundedButton(text: "LOGIN", press: _submit),
-            if (_isLoading)
-              Center(
-                child: CircularProgressIndicator(),
-              ),
+           _isLoading? CircularProgressIndicator() : RoundedButton(text: "LOGIN", press: _submit),
+
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {

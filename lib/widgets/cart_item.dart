@@ -58,8 +58,7 @@ class _CartItemState extends State<CartItem> {
                 Container(
                   width: 130,
                   child: Image(
-                    image: NetworkImage(
-                        "https://www.kclu.org/sites/kclu2/files/201808/STRAWBERRIEDS.jpg"),
+                    image: NetworkImage("http://www.pngall.com/wp-content/uploads/2016/04/Tomato-Download-PNG.png"),
                     fit: BoxFit.fill,
                   ),
                 ),
