@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/constants/text_formed_field_constants.dart';
 
 import '../providers/cart.dart' show Cart;
 import '../providers/orders.dart';
@@ -39,9 +40,11 @@ class CartScreen extends StatelessWidget {
                       ],
                     )),
           ),
-
+          Divider(
+            color: kPrimaryColor,
+          ),
           Container(
-            color: Colors.grey.shade200,
+            color: Colors.white,
             child: Column(
               children: [
                 Padding(
@@ -53,7 +56,11 @@ class CartScreen extends StatelessWidget {
                       Spacer(),
                       Text(
                         "الحساب الكلي:",
-                        style: TextStyle(fontSize: 20.0),
+                        style: TextStyle(
+                          color: kPrimaryColor,
+                          fontSize: 22.0,
+                          fontFamily: "arab",
+                        ),
                         textDirection: TextDirection.rtl,
                       ),
                     ],
@@ -121,21 +128,49 @@ class _OrderButtonState extends State<OrderButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return Container(
+        alignment: Alignment.center,
+        height: 40.0,
+        width: 130.0,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0), color: kPrimaryColor),
+        child: Center(
+          child: FlatButton(
+              onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+                  ? null
+                  : () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await Provider.of<Orders>(context, listen: false)
+                          .addOrder(
+                        widget.cart.items.values.toList(),
+                        widget.cart.totalAmount,
+                      );
+                      setState(() {
+                        _isLoading = false;
+                      });
+                      Navigator.of(context).pushReplacementNamed('/');
+                      widget.cart.clear();
+                    },
+              child: Text('تأكيد الطلب',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22.0,
+                      fontFamily: "arab"))),
+        ));
+
+    /*FlatButton(
       splashColor: Theme.of(context).primaryColor,
-      child: _isLoading
-          ? CircularProgressIndicator()
-          : Container(
+      child:
+          Container(
               width: MediaQuery.of(context).size.width / 3,
               color: Colors.white,
-              child: Text(
-                'أطلب الأن',
-                style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
-              ),
+              child:  Text(
+        'أضف الي العربة',
+        style: GoogleFonts.bigShouldersText(
+            color: Colors.white, fontSize: 12.0),
+      )
             ),
       onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
           ? null
@@ -154,6 +189,6 @@ class _OrderButtonState extends State<OrderButton> {
               widget.cart.clear();
             },
       textColor: Theme.of(context).primaryColor,
-    );
+    );*/
   }
 }

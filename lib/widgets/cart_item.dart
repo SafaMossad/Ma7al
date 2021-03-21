@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/constants/text_formed_field_constants.dart';
 import 'package:shop/providers/cart.dart';
 
 class CartItem extends StatefulWidget {
@@ -32,10 +33,10 @@ class _CartItemState extends State<CartItem> {
     return Dismissible(
         key: ValueKey(widget.id),
         background: Container(
-          color: Theme.of(context).errorColor,
+          color: kPrimaryLightColor,
           child: Icon(
             Icons.delete,
-            color: Colors.white,
+            color: Colors.redAccent,
             size: 40,
           ),
           alignment: Alignment.centerRight,
@@ -56,6 +57,13 @@ class _CartItemState extends State<CartItem> {
             child: Row(
               children: [
                 Container(
+                  decoration: BoxDecoration(
+                      borderRadius:
+                      BorderRadius.circular(50),
+                      border: Border.all(
+                          color: kPrimaryColor,
+                          width: 1)),
+                  color: kPrimaryLightColor,
                   width: 130,
                   child: Image(
                     image: NetworkImage("http://www.pngall.com/wp-content/uploads/2016/04/Tomato-Download-PNG.png"),
@@ -96,11 +104,12 @@ class _CartItemState extends State<CartItem> {
                       Container(
                         height: 40.0,
                         width: 140,
-                        color: Colors.grey.shade200,
+                        color: kPrimaryLightColor,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
+                                color: kPrimaryColor,
                                 icon: Icon(
                                   Icons.add,
                                   size: 18.0,
@@ -112,6 +121,7 @@ class _CartItemState extends State<CartItem> {
                             Text("${widget.quantity}",style: TextStyle(color: Colors.red),),
 
                             IconButton(
+                              color: kPrimaryColor,
                                 icon: Icon(
                                   Icons.remove,
                                   size: 18.0,

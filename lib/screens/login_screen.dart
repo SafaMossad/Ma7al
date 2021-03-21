@@ -87,6 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
+    setState(() {
+      _isLoading =false;
+    });
   }
 
   Future<void> _submit() async {
@@ -105,6 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _authData['password'],
       );
     } on HttpException catch (error) {
+
       var errorMessage = 'Check Email or password';
       if (error.toString().contains("Invalid")) {
         errorMessage = ' Check Email or Password';
@@ -125,6 +129,9 @@ class _LoginScreenState extends State<LoginScreen> {
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
+    setState(() {
+      _isLoading =false;
+    });
   }
 
   @override

@@ -120,7 +120,7 @@ class _ProductItemState extends State<ProductItem> {
                   padding: EdgeInsets.only(top: 170.0, left: 5.0),
                   child: Container(
                       alignment: Alignment.center,
-                      height: 25.0,
+                      height: 30.0,
                       width: 200.0,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.0),
@@ -198,16 +198,20 @@ class _ProductItemState extends State<ProductItem> {
                             ],
                           )
                         );
-                      });*/ /*
+                      });*/
+        /*
                    Navigator.of(context)
                       .pushNamed(ProductDetails.routeName, arguments: product.id.toString());
                 },
                 child:),
-            */ /*footer: GridTileBar(
+            */
+        /*footer: GridTileBar(
               subtitle: Text("\$" + "${product.price}"),
               backgroundColor: Colors.black87,
-              */ /*
-            */ /*    leading: Consumer<Product>(
+              */
+        /*
+            */
+        /*    leading: Consumer<Product>(
                 builder: (ctx ,product ,child)=> IconButton(
                   icon: Icon(
                   product.isFavourite? Icons.favorite : Icons.favorite_border,
@@ -217,7 +221,8 @@ class _ProductItemState extends State<ProductItem> {
                   onPressed: () {product.toggleFavorite();},
                 ),
               ),*/ /*
-            */ /*
+            */
+              /*
               title: Text(
                 product.title,
                 textAlign: TextAlign.center,
@@ -247,7 +252,8 @@ class _ProductItemState extends State<ProductItem> {
                 },
                 color: Theme.of(context).primaryColor,
               ),
-            ),*/ /*
+            ),*/
+              /*
           ),*/
 
         );

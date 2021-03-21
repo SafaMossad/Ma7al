@@ -30,17 +30,14 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final urlCart = 'https://alma7al.herokuapp.com/api/v1/users/$userId/orders';
     print(authToken);
     final timestamp = DateTime.now();
     try {
       final cartResponse = await http.post(urlCart,
-          body: json.encode({
-            "describtion": "Fixed I will change it",
-            "total":10.0
-          }),
+          body: json.encode(
+              {"describtion": "Fixed I will change it", "total": total}),
           headers: {
             'Accept': '*/*',
             'Accept-Encoding': 'gzip, deflate, br',
@@ -54,27 +51,26 @@ class Orders with ChangeNotifier {
       var cartId = (data["id"].toString());
       print("Cart Id=$cartId");
 
-      final urlOrder = 'https://alma7al.herokuapp.com/api/v1/users/1/orders/$cartId/carts';
-    final orderResponse = await http.post(
-        urlOrder,
-      body: json.encode({
-        "cart": cartProducts
-            .map((cp) => {
-                  'item_id': 12,
-                  'qty': 12,
-                })
-            .toList(),
-      }),
-    headers: {
-              'Accept': '*/*',
-              'Accept-Encoding': 'gzip, deflate, br',
-              'Connection': 'keep-alive',
-              'Content-Type': 'application/json',
-              'Authorization': '$authToken'
-            }
-    );
+      final urlOrder =
+          'https://alma7al.herokuapp.com/api/v1/users/1/orders/$cartId/carts';
+      final orderResponse = await http.post(urlOrder,
+          body: json.encode({
+            "cart": cartProducts
+                .map((cp) => {
+                      'item_id': cp.id,
+                      'qty': cp.quantity,
+                    })
+                .toList(),
+          }),
+          headers: {
+            'Accept': '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Content-Type': 'application/json',
+            'Authorization': '$authToken'
+          });
 
-    print(json.encode(orderResponse.body));
+      print(json.encode(orderResponse.body));
 
       _orders.insert(
         0,
@@ -90,6 +86,43 @@ class Orders with ChangeNotifier {
       print(" Caught error=> $error");
       throw error;
     }
+  }
+
+  Future<void> fetchOrders() async {
+    String url = "https://alma7al.herokuapp.com/api/v1/allorders";
+    print(authToken);
+
+    final response = await http.get(url);
+    print(json.decode(response.body));
+
+    final extractedData = json.decode(response.body) ;
+    final List<OrderItem> loadedOrders = [];
+    if (extractedData == null) {
+      return;
+    }
+
+    extractedData.forEach((orderData) {
+     // print(" id id $orderId");
+      loadedOrders.add(
+        OrderItem(
+          id: orderData['id'].toString(),
+          amount: double.parse(orderData['total']),
+          dateTime: DateTime.parse(orderData['created_at']),
+          products: (orderData['carts']  as List<dynamic> )
+              .map(
+                (item) => CartItem(
+                id: 1,
+                price: 12.0,
+                quantity: 3,
+                title: "hihihi",
+               // imageUrl: item['imageUrl']
+            ),
+          ).toList(),
+        ),
+      );
+    });
+    _orders = loadedOrders;
+    notifyListeners();
   }
 
 //  Future<void> addOrder(List<CartItem> cartProducts) async {

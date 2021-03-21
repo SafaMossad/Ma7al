@@ -154,7 +154,7 @@ class MyApp extends StatelessWidget {
               builder: (ctx, authResultSnapshot) =>
               authResultSnapshot.connectionState ==
                   ConnectionState.waiting
-                  ? CircularProgressIndicator()
+                  ? SplashScreen()
                   : LoginScreen(),
             ),
             routes: {

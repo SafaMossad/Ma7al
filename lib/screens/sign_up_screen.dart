@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/constants/text_formed_field_constants.dart';
 import 'package:shop/providers/auth.dart';
 import 'package:shop/models/http_exception.dart';
 
@@ -20,8 +21,28 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  String errorMsg(String str) {
+    switch (str) {
+      case 'Enter Your Password':
+        return 'Invalid Email or Password';
+    }
+    return null;
+  }
+
+  bool isVisible = false;
+
+  @override
+  void initState() {
+    isVisible = true;
+    super.initState();
+  }
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Map<String, String> _authData = {
+    'email': '',
+    'password': '',
+  };
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -96,10 +117,96 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20.0),
                 ),*/
                 // SizedBox(height: size.height * 0.04),
-                EmailField(label: "Your Email", hintTxt: "Email"),
-                SizedBox(height: size.height * 0.02),
-                PasswordField(
-                    label: "Password", hintTxt: "Enter Your Password"),
+
+                Container(
+                  padding: EdgeInsets.only(right: 40.0, left: 40.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      String errorMsg;
+                      if ((value.isEmpty ||
+                          !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
+                          r"*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]"
+                          r"(?:[a-z0-9-]*[a-z0-9])?")
+                              .hasMatch(value))) {
+                        errorMsg = 'Invalid Email or Password';
+                      } else {
+                        return null;
+                      }
+                      return errorMsg;
+                    },
+                    onSaved: (value) {
+                      _authData['email'] = value;
+                    },
+                    decoration: kTextFieldDecoration.copyWith(
+                      //ده علشان اثبت التايتل والهينت في مكانه واشوف بقي انا محتاج الشكل بتاعهم هيكون ايه وهل هخلي ال label فوق ولا في نص التيكيست فيلد وكدا
+                      //floatingLabelBehavior: FloatingLabelBehavior.always,
+                      labelText: "Email",
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      hintText: "Email",
+                      prefixIcon: Padding(
+                        child: Icon(
+                          Icons.email,
+                          color: kPrimaryColor,
+                        ),
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+
+                Container(
+                  padding: EdgeInsets.only(right: 40.0, left: 40.0),
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value.isEmpty || value.length < 6) {
+                        return errorMsg("Enter Your Password");
+                      } else {
+                        return null;
+                      }
+                    },
+                    onSaved: (value) {
+                      _authData['password'] = value;
+                    },
+                    obscureText: isVisible
+                    //&& "Enter Your Password" == 'Enter Your Password'
+                        ? true
+                        : false,
+                    decoration: kTextFieldDecoration.copyWith(
+                      //  floatingLabelBehavior: FloatingLabelBehavior.always,
+                      labelText: "Password",
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      hintText: "Enter Your Password",
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                        child: Icon(
+                          Icons.lock,
+                          color: kPrimaryColor,
+                        ),
+                      ),
+                      suffixIcon: isVisible
+                      //&& 'Enter Your Password' == 'Enter Your Password'
+                          ? IconButton(
+                        icon: Icon(Icons.visibility_off),
+                        color: Colors.black,
+                        onPressed: () {
+                          setState(() {
+                            isVisible = false;
+                          });
+                        },
+                      )
+                          : IconButton(
+                          icon: Icon(Icons.visibility),
+                          color: Colors.black,
+                          onPressed: () {
+                            setState(() {
+                              isVisible = true;
+                            });
+                          }),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
                 SizedBox(height: size.height * 0.02),
                 PasswordField(
                     label: "Password", hintTxt: "Enter Your Password"),
