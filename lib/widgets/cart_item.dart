@@ -29,6 +29,7 @@ class CartItem extends StatefulWidget {
 class _CartItemState extends State<CartItem> {
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
     final cart = Provider.of<Cart>(context);
     return Dismissible(
         key: ValueKey(widget.id),
@@ -48,99 +49,132 @@ class _CartItemState extends State<CartItem> {
         ),
         direction: DismissDirection.endToStart,
         onDismissed: (direction) {
-          Provider.of<Cart>(context, listen: false).removeItem(widget.productId);
+          Provider.of<Cart>(context, listen: false)
+              .removeItem(widget.productId);
         },
         child: Padding(
-          padding: const EdgeInsets.only(left: 18.0),
+          padding: const EdgeInsets.only(left: 20.0, top: 8.0,right: 10.0),
           child: Container(
             height: 120.0,
+            width: screenSize.width,
             child: Row(
               children: [
+                //container Holding Image
                 Container(
+                  height: 120.0,
                   decoration: BoxDecoration(
-                      borderRadius:
-                      BorderRadius.circular(50),
-                      border: Border.all(
-                          color: kPrimaryColor,
-                          width: 1)),
-                  color: kPrimaryLightColor,
-                  width: 130,
-                  child: Image(
-                    image: NetworkImage("http://www.pngall.com/wp-content/uploads/2016/04/Tomato-Download-PNG.png"),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 18.0),
-                  child: Column(
-                    textDirection: TextDirection.rtl,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.title,
-                        textAlign: TextAlign.right,
-                        style: TextStyle(fontSize: 18.0, color: Colors.red),
-                      ),
-                      SizedBox(
-                        height: 5.5,
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: kPrimaryColor, width: 1)),
+                  width: screenSize.width / 4 + 30,
+                  child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Stack(
                         children: [
-                          Text(
-                            '\$${widget.price}',
-                            style: TextStyle(color: Colors.green),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 25),
+                            child: Image(
+                              image: NetworkImage(
+                                  "http://www.pngall.com/wp-content/uploads/2016/04/Tomato-Download-PNG.png"),
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                          SizedBox(
-                            width: 50.5,
-                          ),
-                          Text('الحساب الكلي: ${(widget.price * widget.quantity)}'),
-                          SizedBox(
-                            height: 6.5,
+                          Positioned(
+                            top: 2.0,
+                            right: 2.0,
+                            child: Container(
+                              color: kPrimaryColor,
+                              child: Padding(
+                                padding: const EdgeInsets.all(3),
+                                child: Text(
+                                  'ج.م ${widget.price}',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 10.0),
+                                  textDirection: TextDirection.rtl,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
-                      ),
-                      Container(
-                        height: 40.0,
-                        width: 140,
-                        color: kPrimaryLightColor,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                                color: kPrimaryColor,
-                                icon: Icon(
-                                  Icons.add,
-                                  size: 18.0,
-                                ),
-                                onPressed: () {
-                                  cart.addItem(widget.productId, widget.price, widget.quantity.toString());
-                                }),
+                      )),
+                ),
 
-                            Text("${widget.quantity}",style: TextStyle(color: Colors.red),),
-
-                            IconButton(
-                              color: kPrimaryColor,
-                                icon: Icon(
-                                  Icons.remove,
-                                  size: 18.0,
-                                ),
-                                onPressed: () {
-
-                                 cart.removeSingleItem(widget.productId);
-                                }),
-                          ],
+                //Column Holding Product Details
+                Container(
+                  alignment: Alignment.topRight,
+                  width: screenSize.width * 0.55,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 18.0),
+                    child: Column(
+                      textDirection: TextDirection.rtl,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.title,
+                          textAlign: TextAlign.right,
+                          style: TextStyle(fontSize: 15.0, color: kPrimaryColor,fontFamily: "arab"),
                         ),
-                      )
-                    ],
+                        SizedBox(
+                          height: 5.5,
+                        ),
+                   Row(
+                   mainAxisAlignment: MainAxisAlignment.end,children: [
+
+                     Text(
+                         ' ${(widget.price * widget.quantity).toStringAsFixed(2)}'),
+                     Text(
+                         ' : الكلي', textAlign: TextAlign.right,
+                       style: TextStyle(fontSize: 15.0, color: kPrimaryColor,fontFamily: "arab"),),
+                   ],),
+                        SizedBox(
+                          height: 10.5,
+                        ),
+                        //container for counting
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border:
+                                  Border.all(color: kPrimaryColor, width: 1),
+                          color: kPrimaryLightColor),
+                          height: 40.0,
+                          width: 140,
+                          // color: kPrimaryLightColor,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                  color: Colors.green,
+                                  icon: Icon(
+                                    Icons.add,
+                                    size: 20.0,
+                                  ),
+                                  onPressed: () {
+                                    cart.addItem(widget.productId, widget.price,
+                                        widget.quantity.toString());
+                                  }),
+                              Text(
+                                "${widget.quantity}",
+                                style: TextStyle(color: kPrimaryColor),
+                              ),
+                              IconButton(
+                                  color: Colors.red,
+                                  icon: Icon(
+                                    Icons.remove,
+                                    size: 20.0,
+                                  ),
+                                  onPressed: () {
+                                    cart.removeSingleItem(widget.productId);
+                                  }),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 )
               ],
             ),
           ),
-        )
-
-        );
+        ));
   }
 }

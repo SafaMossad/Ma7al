@@ -87,6 +87,7 @@ class _MyAppState extends State<MyApp> {
   }
 }*/
 import 'package:flutter/material.dart';
+import 'package:shop/screens/order_details_screen.dart';
 import './providers/category.dart';
 import 'package:provider/provider.dart';
 import './providers/orders.dart';
@@ -114,7 +115,7 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider.value(value: Auth()),
           ChangeNotifierProxyProvider<Auth, Products>(
-            child: Tabs(),
+          //  child: Tabs(),
             update: (ctx, auth, previousProducts) => Products(
               auth.token,
               auth.userId,
@@ -161,6 +162,7 @@ class MyApp extends StatelessWidget {
               LoginScreen.routeName: (ctx) => LoginScreen(),
               Tabs.routeName: (ctx) => Tabs(),
               ProductDetails.routeName: (ctx) => ProductDetails(),
+              OrderDetails.routeName:(ctx)=> OrderDetails(),
               CartScreen.routeName: (ctx) => CartScreen(),
               OrdersScreen.routeName: (ctx) => OrdersScreen(),
             },

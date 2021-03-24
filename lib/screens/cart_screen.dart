@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/constants/text_formed_field_constants.dart';
+import 'package:shop/widgets/loading.dart';
 
 import '../providers/cart.dart' show Cart;
 import '../providers/orders.dart';
@@ -17,7 +18,11 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Cart'),
+        centerTitle: true,
+        title: Text(
+          'العربة',
+          style: TextStyle(fontSize: 30.0),
+        ),
       ),
       body: Column(
         children: <Widget>[
@@ -42,9 +47,10 @@ class CartScreen extends StatelessWidget {
           ),
           Divider(
             color: kPrimaryColor,
+            thickness: 1,
           ),
           Container(
-            color: Colors.white,
+            color: kPrimaryLightColor,
             child: Column(
               children: [
                 Padding(
@@ -66,40 +72,45 @@ class CartScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Card(
-                  // color: Theme.of(context).primaryColor,
-                  /*  child: InkWell(
-                       // splashColor: Colors.blueGrey,
-                        onTap: (cart.totalAmount <= 0 || _isLoading)
-                            ? null
-                            : () async {
+                 Padding(
+                  padding: const EdgeInsets.only(
+                    bottom: 8.0,
+                  ),
+                  child: Card(
+                    // color: Theme.of(context).primaryColor,
+                    /*  child: InkWell(
+                         // splashColor: Colors.blueGrey,
+                          onTap: (cart.totalAmount <= 0 || _isLoading)
+                              ? null
+                              : () async {
 
-                                await Provider.of<Orders>(context,
-                                        listen: false)
-                                    .addOrder(
-                                  cart.items.values.toList(),
-                                  cart.totalAmount,
-                                );
+                                  await Provider.of<Orders>(context,
+                                          listen: false)
+                                      .addOrder(
+                                    cart.items.values.toList(),
+                                    cart.totalAmount,
+                                  );
 
-                                Navigator.of(context).pushReplacementNamed('/');
-                                cart.clear();
-                              },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width /2,
-                          child: _isLoading
-                              ? CircularProgressIndicator()
-                              : Text(
-                                  "أطلب الأن",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                        ),
-                      ),*/
-                  child: OrderButton(
-                    cart: cart,
+                                  Navigator.of(context).pushReplacementNamed('/');
+                                  cart.clear();
+                                },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width /2,
+                            child: _isLoading
+                                ? CircularProgressIndicator()
+                                : Text(
+                                    "أطلب الأن",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                          ),
+                        ),*/
+                    child: OrderButton(
+                      cart: cart,
+                    ),
                   ),
                 ),
               ],
@@ -128,37 +139,79 @@ class _OrderButtonState extends State<OrderButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        alignment: Alignment.center,
-        height: 40.0,
-        width: 130.0,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.0), color: kPrimaryColor),
-        child: Center(
-          child: FlatButton(
-              onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
-                  ? null
-                  : () async {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      await Provider.of<Orders>(context, listen: false)
-                          .addOrder(
-                        widget.cart.items.values.toList(),
-                        widget.cart.totalAmount,
-                      );
-                      setState(() {
-                        _isLoading = false;
-                      });
-                      Navigator.of(context).pushReplacementNamed('/');
-                      widget.cart.clear();
-                    },
-              child: Text('تأكيد الطلب',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22.0,
-                      fontFamily: "arab"))),
-        ));
+    return _isLoading
+        ? LoadingSpinner()
+        :  Container(
+            alignment: Alignment.center,
+            height: 40.0,
+            width: 130.0,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0), color: kPrimaryColor),
+            child: FlatButton(
+                onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+                    ? null
+                    : () async {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        await Provider.of<Orders>(context, listen: false)
+                            .addOrder(
+                              widget.cart.items.values.toList(),
+                              widget.cart.totalAmount,
+                            )
+                            .then((value) => {
+                                  setState(() {
+                                    _isLoading = false;
+                                  }),
+                                  showDialog(
+                                    // barrierColor: kPrimaryLightColor,
+                                    context: context,
+                                    child: AlertDialog(
+                                      content: Container(
+                                        child: Wrap(
+                                          children: [
+                                            Text(
+                                              "تم الطلب بنجاح",
+                                              textDirection: TextDirection.rtl,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      title: Center(
+                                        child: Text(
+                                          "ملاحظة",
+                                          textDirection: TextDirection.rtl,
+                                          style: TextStyle(
+                                              fontSize: 30.0,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        ),
+                                      ),
+                                      actions: [
+                                        FlatButton(
+                                            child: Text(
+                                              "ok",
+                                              style: TextStyle(
+                                                  fontSize: 22.0,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                            ),
+                                            onPressed: () =>
+                                                Navigator.of(context)
+                                                    .pushReplacementNamed('/'))
+                                      ],
+                                    ),
+                                  ),
+                                });
+
+                        widget.cart.clear();
+                      },
+                child: Text('تأكيد الطلب',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22.0,
+                        fontFamily: "arab"))),
+          );
 
     /*FlatButton(
       splashColor: Theme.of(context).primaryColor,

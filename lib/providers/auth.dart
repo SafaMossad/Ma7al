@@ -10,12 +10,18 @@ class Auth with ChangeNotifier {
   String _token;
   String _userId;
 
+  //String _userName;
+
   String get token {
     if (_token != null) {
       return _token;
     }
     return null;
   }
+
+  /* String get userName {
+    return _userName;
+  }*/
 
   bool get isAuth {
     return token != null;
@@ -61,12 +67,14 @@ class Auth with ChangeNotifier {
         }
         _token = data["auth_token"];
         _userId = data['id'].toString();
+        // _userName=profile["email"];
         notifyListeners();
         final prefs = await SharedPreferences.getInstance();
         final userData = json.encode(
           {
             'token': _token,
             'userId': _userId,
+            //'email':_userName,
           },
         );
         prefs.setString('userData', userData);
@@ -100,12 +108,54 @@ class Auth with ChangeNotifier {
       }
       _token = data["auth_token"];
       _userId = data['id'].toString();
+      // _userName=data["email"].toString();
       notifyListeners();
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
           'token': _token,
           'userId': _userId,
+          //'email':_userName,
+        },
+      );
+      prefs.setString('userData', userData);
+    } catch (error) {
+      print(" Caught error=> $error");
+      throw error;
+    }
+  }
+
+  Future<void> signUp(String email, String password) async {
+    String url = "https://alma7al.herokuapp.com/api/v1/users";
+    Map<String, String> headers = {"Content-type": "application/json"};
+    String body = json.encode({
+      "user": {
+        "email": "$email",
+        "password": "$password",
+        "password_confirmation": "$password"
+      }
+    });
+
+    try {
+      // make POST request
+      final response = await http.post(url, headers: headers, body: body);
+
+      var data = json.decode(response.body);
+      print("API Response=> $data");
+
+      if (data['errors'] != null) {
+        throw HttpException(data['errors']);
+      }
+      _token = data["auth_token"];
+      _userId = data['id'].toString();
+      // _userName=data["email"].toString();
+      notifyListeners();
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode(
+        {
+          'token': _token,
+          'userId': _userId,
+          //'email':_userName,
         },
       );
       prefs.setString('userData', userData);
@@ -175,13 +225,13 @@ class Auth with ChangeNotifier {
     }
   }
 
-
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
       return false;
     }
-    final extractedUserData = json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
 
     _token = extractedUserData['token'];
     _userId = extractedUserData['userId'];

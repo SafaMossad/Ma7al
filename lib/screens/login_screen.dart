@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/constants/text_formed_field_constants.dart';
 import 'package:shop/models/http_exception.dart';
+import 'package:shop/widgets/loading.dart';
 import 'package:shop/widgets/login_background.dart';
 
 import '../providers/auth.dart';
@@ -12,7 +13,8 @@ import '../widgets/rounded_button.dart';
 import '../widgets/social_icon.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const routeName ="/login";
+  static const routeName = "/login";
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -70,7 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
       var errorMessage = 'Authentication failed';
       if (error.toString().contains('EMAIL_EXISTS')) {
         errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains(' "errors": "Invalid email or password"')) {
+      } else if (error
+          .toString()
+          .contains(' "errors": "Invalid email or password"')) {
         errorMessage = 'This is not a valid email address';
       } else if (error.toString().contains('WEAK_PASSWORD')) {
         errorMessage = 'This password is too weak.';
@@ -88,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _showErrorDialog(errorMessage);
     }
     setState(() {
-      _isLoading =false;
+      _isLoading = false;
     });
   }
 
@@ -102,17 +106,24 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     try {
+      setState(() {
+        _isLoading = true;
+      });
       // Log user in
       await Provider.of<Auth>(context, listen: false).login(
         _authData['email'],
         _authData['password'],
       );
+      setState(() {
+        _isLoading = false;
+      });
     } on HttpException catch (error) {
-
       var errorMessage = 'Check Email or password';
       if (error.toString().contains("Invalid")) {
         errorMessage = ' Check Email or Password';
-      } else if (error.toString().contains(' "errors": "Invalid email or password"')) {
+      } else if (error
+          .toString()
+          .contains(' "errors": "Invalid email or password"')) {
         errorMessage = 'This is not a valid email address';
       } else if (error.toString().contains('WEAK_PASSWORD')) {
         errorMessage = 'This password is too weak.';
@@ -130,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _showErrorDialog(errorMessage);
     }
     setState(() {
-      _isLoading =false;
+      _isLoading = false;
     });
   }
 
@@ -213,8 +224,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
                 obscureText: isVisible
                     //&& "Enter Your Password" == 'Enter Your Password'
-                        ? true
-                        : false,
+                    ? true
+                    : false,
                 decoration: kTextFieldDecoration.copyWith(
                   //  floatingLabelBehavior: FloatingLabelBehavior.always,
                   labelText: "Password",
@@ -250,7 +261,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 20.0),
-           _isLoading? CircularProgressIndicator() : RoundedButton(text: "LOGIN", press: _submit),
+            _isLoading
+                ? Center(child: LoadingSpinner())
+                : RoundedButton(text: "LOGIN", press: _submit),
 
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(

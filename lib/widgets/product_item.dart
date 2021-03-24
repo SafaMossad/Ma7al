@@ -72,7 +72,7 @@ class _ProductItemState extends State<ProductItem> {
           },
           child: Container(
             padding: EdgeInsets.only(right: 10.0),
-            height: 150,
+            height: 300,
             child: Stack(
               alignment: Alignment.topRight,
               children: [
@@ -134,11 +134,11 @@ class _ProductItemState extends State<ProductItem> {
                               Scaffold.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    'Added item to cart!',
+                                    '!تم اضافة العنصر الي العربة',
                                   ),
                                   duration: Duration(seconds: 2),
                                   action: SnackBarAction(
-                                    label: 'UNDO',
+                                    label: 'الغاء',
                                     onPressed: () {
                                       cart.removeSingleItem(
                                           product.id.toString());

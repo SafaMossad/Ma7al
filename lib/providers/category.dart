@@ -18,12 +18,17 @@ class Category with ChangeNotifier {
 
   Category(this.authToken, this.userId, this._category);
 
+  int get length {
+    return _category.length - 1;
+  }
+
   List<CategoryItem> get category {
     return [..._category];
   }
 
   Future<List<CategoryItem>> fetchItems() async {
-    String myUrl = "https://alma7al.herokuapp.com/api/v1/admins/$userId/categories";
+    String myUrl =
+        "https://alma7al.herokuapp.com/api/v1/admins/$userId/categories";
     try {
       var response = await http.get(myUrl, headers: {
         'Accept': '*/*',

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/constants/text_formed_field_constants.dart';
+import 'package:shop/widgets/loading.dart';
 
 import '../providers/cart.dart';
 import '../providers/category.dart';
@@ -19,12 +20,12 @@ class Tabs extends StatefulWidget {
 }
 
 class _TabsState extends State<Tabs> {
-
+  var categoryIndex = 0;
 
   var _isInit = true;
 
- // var categoryId = 1;
-  var initial = 8;
+  // var categoryId = 1;
+  var initial = 1;
   var _isLoading = false;
 
   void didChangeDependencies() {
@@ -65,6 +66,9 @@ class _TabsState extends State<Tabs> {
     setState(() {
       _isLoading = false;
     });
+    setState(() {
+      categoryIndex = index;
+    });
   }
 
   Widget build(BuildContext context) {
@@ -95,128 +99,128 @@ class _TabsState extends State<Tabs> {
                 ))
           ],
         ),
-        body:
-        DefaultTabController(
-            length: categories.length,
-           // initialIndex: 7,
-            child: _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(
-                    strokeWidth: 2.0,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                        Theme.of(context).primaryColor),
-                  ))
-                : Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Column(children: <Widget>[
-                      Container(
-                          height: 40.0,
+        body: DefaultTabController(
+          length: categories.length,
+          initialIndex: categoryIndex,
+          child: _isLoading
+              ? Center(child: LoadingSpinner())
+              : Column(children: <Widget>[
+                  Container(
+                      height: 55.0,
 
-                          /*color: kPrimaryColor,*/
-                          child: ListView.builder(shrinkWrap: true,
-                              reverse: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, pos) {
-                                return TabBar(
-                                  labelPadding: EdgeInsets.all(2.0),
-                                  onTap: (index) {
-                                    data(index);
-                                  },
-                                  indicator: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(50),
-                                      color: kPrimaryColor),
-                                  unselectedLabelStyle: TextStyle(
-                                      color: Colors.black, fontSize: 12.0),
-                                  labelColor: Colors.white,
-                                  indicatorSize: TabBarIndicatorSize.label,
-                                  unselectedLabelColor: kPrimaryColor,
-                                  isScrollable: true,
-                                  /*   // unselectedLabelColor: Colors.redAccent,
+                      /*color: kPrimaryColor,*/
+                      child: ListView.builder(
+                          // shrinkWrap: true,
+                          reverse: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: 1,
+                          itemBuilder: (BuildContext context, pos) {
+                            return TabBar(
+                              labelPadding: EdgeInsets.all(2.0),
+                              onTap: (index) {
+                                data(index);
+                              },
+                              indicator: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: kPrimaryColor),
+                              unselectedLabelStyle: TextStyle(
+                                  color: Colors.black, fontSize: 12.0),
+                              labelColor: Colors.white,
+                              indicatorSize: TabBarIndicatorSize.label,
+                              unselectedLabelColor: kPrimaryColor,
+                              isScrollable: true,
+                              /*   // unselectedLabelColor: Colors.redAccent,
 
                             // indicatorPadding: EdgeInsets.all(5.0),
 
                             */
-                                  /*indicator: BoxDecoration(
+                              /*indicator: BoxDecoration(
                                 borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(10),
                                     topRight: Radius.circular(10)),
                                 color: Colors.white),*/
-                                  /*
+                              /*
                             // unselectedLabelColor: kPrimaryColor,
 
                             //unselectedLabelColor: Colors.redAccent,
                             //labelStyle: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w800),
 
                             //indicatorColor: Colors.transparent,*/
-                                  tabs: <Widget>[
-                                    ////
-                                    for (int x = 0; x < categories.length; x++)
-                                      Container(
+                              tabs: <Widget>[
+                                ////
+                                for (int x = 0; x < categories.length; x++)
+                                  Container(
+                                    alignment: Alignment.center,
+                                    child: Tab(
+                                      child: Container(
                                         alignment: Alignment.center,
-                                        child: Tab(
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
-                                                border: Border.all(
-                                                    color: kPrimaryColor,
-                                                    width: 1)),
-                                            width: 120.0,
-                                            child: Align(
-                                              alignment: Alignment.center,
-                                              child: Text(categories[x].title,
-                                                  style: TextStyle(
-                                                      fontSize: 18.0,
-                                                      fontFamily: ("jom"))),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            border: Border.all(
+                                                color: kPrimaryColor,
+                                                width: 1)),
+                                        width: 120.0,
+                                        height: 40.0,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8.0),
+
+                                            child: Text(
+                                              categories[x].title,
+                                              style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontFamily: ("arab")),
+                                              textDirection: TextDirection.rtl,
                                             ),
                                           ),
                                         ),
                                       ),
+                                    ),
 
-                                    ////
-                                  ],
-                                );
-                              })),
 
-                      //Divider(),
-                      Expanded(
-                        child: TabBarView(
-                            physics: NeverScrollableScrollPhysics(),
-                            children: <Widget>[
-                              for (int x = 0; x < categories.length; x++)
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 5.0, vertical: 5.0),
-                                  child: _isLoading
-                                      ? Center(
-                                          child: CircularProgressIndicator(
-                                          strokeWidth: 2.0,
-                                          valueColor: AlwaysStoppedAnimation<
-                                                  Color>(
-                                              Theme.of(context).primaryColor),
-                                        ))
-                                      : GridView.builder(
-                                          padding: const EdgeInsets.all(10.0),
-                                          itemCount: products.length,
-                                          itemBuilder: (ctx, index) =>
-                                              ChangeNotifierProvider.value(
-                                            value: products[index],
-                                            child: ProductItem(),
-                                          ),
-                                          gridDelegate:
-                                              SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            childAspectRatio: 3.2 / 3.9,
-                                            crossAxisSpacing: 5,
-                                            mainAxisSpacing: 5,
-                                          ),
-                                        ),
-                                ),
-                            ]),
-                      ),
-                    ] /////////////////////////////////////
-                        ),
-                  )));
+                                ////
+                              ],
+                            );
+                          })),
+
+                  //Divider(),
+                  Expanded(
+                    child: TabBarView(
+                        physics: NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                          for (int x = 0; x < categories.length; x++)
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 5.0, vertical: 5.0),
+                              child: _isLoading
+                                  ? Center(
+                                      child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Theme.of(context).primaryColor),
+                                    ))
+                                  : GridView.builder(
+                                      padding: const EdgeInsets.all(10.0),
+                                      itemCount: products.length,
+                                      itemBuilder: (ctx, index) =>
+                                          ChangeNotifierProvider.value(
+                                        value: products[index],
+                                        child: ProductItem(),
+                                      ),
+                                      gridDelegate:
+                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 3.2 / 3.9,
+                                        crossAxisSpacing: 5,
+                                        mainAxisSpacing: 5,
+                                      ),
+                                    ),
+                            ),
+                        ]),
+                  ),
+                ] /////////////////////////////////////
+                  ),
+        ));
   }
 }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/constants/text_formed_field_constants.dart';
-import 'package:shop/providers/auth.dart';
 import 'package:shop/models/http_exception.dart';
+import 'package:shop/providers/auth.dart';
+import 'package:shop/widgets/loading.dart';
 
-import '../shared_text_field_component/email_field.dart';
-import '../shared_text_field_component/password_field.dart';
-import '../shared_text_field_component/phone_field.dart';
 import '../widgets/already_have_an_account_check.dart';
 import '../widgets/or_divider.dart';
 import '../widgets/rounded_button.dart';
@@ -21,7 +19,6 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
   String errorMsg(String str) {
     switch (str) {
       case 'Enter Your Password':
@@ -29,7 +26,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
     return null;
   }
-
+  final _passwordController = TextEditingController();
   bool isVisible = false;
 
   @override
@@ -43,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     'email': '',
     'password': '',
   };
+
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -61,7 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<void> _submitForm() async {
+  Future<void> _submitFormFaceBook() async {
     try {
       // Log user in
       await Provider.of<Auth>(context, listen: false).signUpFacebook();
@@ -90,6 +88,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'Could not authenticate you. Please try again later.';
       _showErrorDialog(errorMessage);
     }
+  }
+
+  var _isLoading = false;
+
+  Future<void> _submitForm() async {
+    if (!_formKey.currentState.validate()) {
+      // Invalid!
+      return;
+    }
+    _formKey.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+
+      setState(() {
+        _isLoading = true;
+      });
+      // Log user in
+      await Provider.of<Auth>(context, listen: false).signUp(
+        _authData['email'],
+        _authData['password'],
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+
+
+      /* Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => Tabs()));*/
+    } on HttpException catch (error) {
+      var errorMessage = 'Authentication failed';
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = 'This email address is already in use.';
+      } else if (error
+          .toString()
+          .contains(' "errors": "Invalid email or password"')) {
+        errorMessage = 'This is not a valid email address';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak.';
+      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with that email.';
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = 'Invalid password.';
+      }
+      _showErrorDialog(errorMessage);
+    } catch (error) {
+      print(",esssssage $error");
+
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
+      _showErrorDialog(errorMessage);
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -125,8 +181,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       String errorMsg;
                       if ((value.isEmpty ||
                           !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'"
-                          r"*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]"
-                          r"(?:[a-z0-9-]*[a-z0-9])?")
+                                  r"*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]"
+                                  r"(?:[a-z0-9-]*[a-z0-9])?")
                               .hasMatch(value))) {
                         errorMsg = 'Invalid Email or Password';
                       } else {
@@ -168,6 +224,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onSaved: (value) {
                       _authData['password'] = value;
                     },
+                    controller: _passwordController,
+                    obscureText: isVisible
+                        //&& "Enter Your Password" == 'Enter Your Password'
+                        ? true
+                        : false,
+                    decoration: kTextFieldDecoration.copyWith(
+                      //  floatingLabelBehavior: FloatingLabelBehavior.always,
+                      labelText: "Password",
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      hintText: "Enter Your Password",
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                        child: Icon(
+                          Icons.lock,
+                          color: kPrimaryColor,
+                        ),
+                      ),
+                      suffixIcon: isVisible
+                          //&& 'Enter Your Password' == 'Enter Your Password'
+                          ? IconButton(
+                              icon: Icon(Icons.visibility_off),
+                              color: Colors.black,
+                              onPressed: () {
+                                setState(() {
+                                  isVisible = false;
+                                });
+                              },
+                            )
+                          : IconButton(
+                              icon: Icon(Icons.visibility),
+                              color: Colors.black,
+                              onPressed: () {
+                                setState(() {
+                                  isVisible = true;
+                                });
+                              }),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.0),
+
+                SizedBox(height: size.height * 0.02),
+                Container(
+                  padding: EdgeInsets.only(right: 40.0, left: 40.0),
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value!=  _passwordController.text) {
+                        return "Passwords do not match";
+                      }
+                        return null;
+
+                    },
+
                     obscureText: isVisible
                     //&& "Enter Your Password" == 'Enter Your Password'
                         ? true
@@ -208,15 +317,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: 20.0),
                 SizedBox(height: size.height * 0.02),
-                PasswordField(
-                    label: "Password", hintTxt: "Enter Your Password"),
+
                 SizedBox(height: size.height * 0.02),
-                Phone(label: "Phone", hintTxt: "Enter Your Phone Number"),
-                SizedBox(height: size.height * 0.02),
-                RoundedButton(
-                  text: "SIGN UP",
-                  press: _submitForm,
-                ),
+                _isLoading
+                    ? Center(child: LoadingSpinner())
+                    : RoundedButton(
+                        text: "SIGN UP",
+                        press: _submitForm,
+                      ),
                 SizedBox(height: size.height * 0.03),
                 AlreadyHaveAnAccountCheck(
                   login: false,
@@ -237,7 +345,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: <Widget>[
                     SocialIcon(
                       iconSrc: "assets/icons/facebook.svg",
-                      press: _submitForm,
+                      press: _submitFormFaceBook,
                     ),
                     /*SocialIcon(
                       iconSrc: "assets/icons/twitter.svg",

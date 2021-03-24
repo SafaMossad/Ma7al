@@ -1,33 +1,78 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as http;
-
-import './cart.dart';
+import 'package:shop/providers/cart.dart';
 
 class OrderItem {
   final String id;
-  final double amount;
+  final double total;
   final List<CartItem> products;
   final DateTime dateTime;
 
   OrderItem({
     @required this.id,
-    @required this.amount,
+    @required this.total,
     @required this.products,
     @required this.dateTime,
   });
 }
 
+class InitialCartItem {
+  final String id;
+  final String description;
+  final double total;
+  final DateTime dateTime;
+
+  InitialCartItem({
+    @required this.id,
+    @required this.description,
+    @required this.total,
+    @required this.dateTime,
+  });
+}
+
+
+
+
+class Details {
+  final String id;
+  final int qty;
+  final int itemId;
+  final String title;
+  final double price;
+
+  Details({
+    @required this.id,
+    @required this.qty,
+    @required this.itemId,
+    @required this.title,
+    @required this.price,
+  });
+}
+
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  List<InitialCartItem> _initialCart = [];
+  List<Details> _details = [];
+
+
   final String authToken;
   final String userId;
-
   Orders(this.authToken, this.userId, this._orders);
+
 
   List<OrderItem> get orders {
     return [..._orders];
+  }
+
+  List<InitialCartItem> get initialCart {
+    return [..._initialCart];
+  }
+
+  List<Details> get details {
+    return [..._details];
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
@@ -76,7 +121,7 @@ class Orders with ChangeNotifier {
         0,
         OrderItem(
           id: json.decode(cartResponse.body)['id'].toString(),
-          amount: total,
+          total: total,
           dateTime: timestamp,
           products: cartProducts,
         ),
@@ -89,81 +134,99 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchOrders() async {
-    String url = "https://alma7al.herokuapp.com/api/v1/allorders";
+    String url = "https://alma7al.herokuapp.com/api/v1/users/3/orders";
     print(authToken);
 
-    final response = await http.get(url);
-    print(json.decode(response.body));
+    final response = await http.get(url, headers: {
+      'Accept': '*/*',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Content-Type': 'application/json',
+      'Authorization': '$authToken'
+    });
 
-    final extractedData = json.decode(response.body) ;
-    final List<OrderItem> loadedOrders = [];
+    var data = json.decode(response.body);
+
+    print(data);
+    final extractedData = json.decode(response.body);
+    final List<InitialCartItem> loadedOrders = [];
     if (extractedData == null) {
       return;
     }
 
     extractedData.forEach((orderData) {
-     // print(" id id $orderId");
+      // print(" id id $orderId");
       loadedOrders.add(
-        OrderItem(
+        InitialCartItem(
+
           id: orderData['id'].toString(),
-          amount: double.parse(orderData['total']),
+          total: double.parse(orderData['total']),
           dateTime: DateTime.parse(orderData['created_at']),
-          products: (orderData['carts']  as List<dynamic> )
-              .map(
-                (item) => CartItem(
-                id: 1,
-                price: 12.0,
-                quantity: 3,
-                title: "hihihi",
-               // imageUrl: item['imageUrl']
-            ),
-          ).toList(),
+         description: orderData['describtion'],
         ),
       );
     });
-    _orders = loadedOrders;
-    notifyListeners();
+    _initialCart = loadedOrders.reversed.toList();
+    //notifyListeners();
   }
 
-//  Future<void> addOrder(List<CartItem> cartProducts) async {
-//    final urlCart = 'https://alma7al.herokuapp.com/api/v1/users/1/orders';
-//
-//    final timestamp = DateTime.now();
-//
-//
-//
-//
-//
-//    final urlOrede = 'https://alma7al.herokuapp.com/api/v1/users/1/orders/15/carts';
-//    final response = await http.post(
-//        urlCart,
-//      body: json.encode({
-//        "cart": cartProducts
-//            .map((cp) => {
-//                  'item_id': 12,
-//                  'qty': 12,
-//                })
-//            .toList(),
-//      }),
-//    headers: {
-//              'Accept': '*/*',
-//              'Accept-Encoding': 'gzip, deflate, br',
-//              'Connection': 'keep-alive',
-//              'Content-Type': 'application/json',
-//              'Authorization': '$authToken'
-//            }
-//    );
-//
-//    print(json.encode(response.body));
-// /*   _orders.insert(
-//      0,
-//      OrderItem(
-//        id: json.decode(response.body)['name'],
-//        amount: 550,
-//        dateTime: timestamp,
-//        products: cartProducts,
-//      ),
-//    );*/
-//    notifyListeners();
-//  }
+
+  Future<void> fetchOrdersDetails(int orderId) async {
+    String url = "https://alma7al.herokuapp.com/api/v1/users/$userId/orders/$orderId/carts";
+    print(authToken);
+
+    final response = await http.get(url, headers: {
+      'Accept': '*/*',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Content-Type': 'application/json',
+      'Authorization': '$authToken'
+    });
+
+    var data = json.decode(response.body);
+
+    print(data);
+    final extractedData = json.decode(response.body);
+   // print(data[1]["item"]["title"]);
+    final List<Details> loadedOrders = [];
+    if (extractedData == null) {
+      return;
+    }
+
+    extractedData.forEach((orderData) {
+      // print(" id id $orderId");
+      loadedOrders.add(
+        Details(
+          id: orderData["id"].toString(),
+        qty: orderData["qty"],
+        title: orderData["item"]["title"],
+        price: double.parse(orderData["item"]["price"]),
+        itemId:  orderData["item"]["id"],
+
+        /*  id: orderData["item"]["category_id"].toString(),
+           total: orderData["qty"].toDouble() ,
+          dateTime: DateTime.parse(orderData['created_at']),
+          */
+        /* products: (orderData['item'] as List<dynamic>)
+              .map(
+                (item) => CartItem(
+                  id: item["item"]["title"],
+                 */
+
+          /* price: double.parse(item["item"]["price"]),
+                  quantity: int.parse(item["item"]["id"]),
+                  title: item["item"]["title"].toString(),*//**//*
+                  // imageUrl: item['imageUrl']
+                )
+              ).toList(),
+*/
+        ),
+      );
+    });
+    _details = loadedOrders.reversed.toList();
+    //notifyListeners();
+    //_initialCart = loadedOrders.reversed.toList();
+    //notifyListeners();
+  }
+
 }
